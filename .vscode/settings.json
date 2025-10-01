@@ -1,0 +1,5 @@
+{
+    "dataworkspace.excludedProjects": [
+        "API/Data/APIDB/APIDB.sqlproj"
+    ]
+}
