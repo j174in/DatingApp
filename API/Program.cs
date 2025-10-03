@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddCors();
+
 //Adding DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
@@ -17,6 +19,16 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 
 var app = builder.Build();
+
+app.UseCors(x =>
+{
+    x.AllowAnyHeader()
+     .AllowAnyMethod()
+     .WithOrigins(
+        "http://localhost:4200",
+        "https://localhost:4200"
+     );
+});
 
 //Configure HTTP request Pipeline
 app.MapControllers();
