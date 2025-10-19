@@ -1,4 +1,17 @@
 <app-nav />
 
 <!-- <app-home [membersFromApp]="members()" /> -->
-<app-home />
+<!-- <app-home /> -->
+
+<!-- <div class="container mt-24 mx-auto">
+  <router-outlet />
+</div> -->
+
+<div
+  [class.mt-24]="router.url !== '/'"
+  [class.container]="router.url !== '/'"
+  [class.mx-auto]="router.url !== '/'"
+>
+  <!-- <div [ngClass]="{'mt-24 container mx-auto' : !(router.url === '/')}"> -->
+  <router-outlet />
+</div>
