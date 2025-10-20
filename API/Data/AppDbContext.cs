@@ -6,5 +6,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
     // public AppDbContext(DbContextOptions options) : base(options)
     public DbSet<AppUser> users { get; set; }
+    public DbSet<Member> Member { get; set; }
+    public DbSet<Photo> Photo { get;  set; }
 
 }

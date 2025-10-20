@@ -14,6 +14,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
 //Adding DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -25,7 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     );
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme )
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         var tokenKey = builder.Configuration["TokenKey"]
@@ -57,5 +58,19 @@ app.UseAuthorization();
 
 //Configure HTTP request Pipeline
 app.MapControllers();
- 
+
+//service locator pattern
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedUsers(context);
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError("Error occured while seeding {ex}", ex);
+}
 app.Run();
