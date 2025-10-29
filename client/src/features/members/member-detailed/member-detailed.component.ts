@@ -1,11 +1,63 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { MemberService } from '../../../core/services/member.service';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { filter, Observable, single } from 'rxjs';
+import { Member } from '../../../types/member';
+import { AgePipe } from '../../../core/pipes/age.pipe';
 
 @Component({
   selector: 'app-member-detailed',
-  imports: [],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, AgePipe],
   templateUrl: './member-detailed.component.html',
-  styleUrl: './member-detailed.component.css'
+  styleUrl: './member-detailed.component.css',
 })
-export class MemberDetailedComponent {
+export class MemberDetailedComponent implements OnInit {
+  private memberService = inject(MemberService);
+  private activeRouter = inject(ActivatedRoute);
+  // protected member$?: Observable<Member>;
+  protected member = signal<Member | undefined>(undefined);
 
+  private router = inject(Router);
+  protected title = signal<string | undefined>('Profile');
+
+  ngOnInit(): void {
+    // this.member$ = this.loadMember();
+
+    this.activeRouter.data.subscribe({
+      next: (data) => this.member.set(data['member']),
+    });
+
+    //setting on intial load
+    this.title.set(this.activeRouter.firstChild?.snapshot?.title);
+
+    // Property	Value (for /dashboard/profile)	Description
+    // this.route	The route for /dashboard	The parent route.
+    // this.route.firstChild	The route for /profile	Points to the first and only currently active child route.
+    // childRoute.snapshot	Snapshot of the /profile route	Provides static access to the route data.
+    // childRoute.snapshot.url[0].path	'profile'	Retrieves the URL segment for the active child route.
+
+    //changing based on router events
+    this.router.events
+      .pipe(filter((events) => events instanceof NavigationEnd))
+      .subscribe({
+        next: () =>
+          this.title.set(this.activeRouter.firstChild?.snapshot?.title),
+      });
+  }
+
+  loadMember() {
+    const id = this.activeRouter.snapshot.paramMap.get('id');
+
+    if (!id) return;
+
+    return this.memberService.getMember(id);
+  }
 }
