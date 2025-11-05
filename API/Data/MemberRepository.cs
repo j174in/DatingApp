@@ -25,6 +25,12 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     .SelectMany(x => x.Photos)
     .ToListAsync();
   }
+  public async Task<Member?> GetMemberForUpdateAsync(string memberId)
+  {
+    return await context.Member
+    .Include(x => x.User)
+    .SingleOrDefaultAsync(x => x.Id == memberId);
+  }
 
   public async Task<bool> SaveAllAsync()
   {

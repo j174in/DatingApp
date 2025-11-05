@@ -35,6 +35,11 @@
       <a routerLink="/errors" routerLinkActive="text-accent">Errors</a>
       }
     </nav>
+
+    @if(busyService.busyRequestCount() > 0){
+    <span class="loading loading-spinner text-accent"></span>
+    }
+
     <div class="flex align-middle ml-auto gap-3">
       <!-- temlate-driven forms -->
       <!-- @ngForm is a way of adding template reference -->
@@ -66,7 +71,7 @@
         </button>
         <ul
           tabindex="1"
-          class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          class="dropdown-content z-50 menu bg-base-100 rounded-box w-52 p-2 shadow-sm"
         >
           @for (theme of themes; track $index) {
           <li (click)="handleSelectedTheme(theme)">
@@ -93,7 +98,9 @@
           tabindex="-1"
           class="dropdown-content dropdown-end menu bg-base-100 z-1 w-52"
         >
-          <li><a>Edit profile</a></li>
+          <li routerLink="/members/{{ user.id }}/profile">
+            <a>Edit profile</a>
+          </li>
           <li><a (click)="logout()">logout</a></li>
         </ul>
       </div>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MemberService } from '../../../core/services/member.service';
 import {
   ActivatedRoute,
@@ -12,6 +12,7 @@ import { AsyncPipe } from '@angular/common';
 import { filter, Observable, single } from 'rxjs';
 import { Member } from '../../../types/member';
 import { AgePipe } from '../../../core/pipes/age.pipe';
+import { AccountService } from '../../../core/services/account.service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -20,10 +21,18 @@ import { AgePipe } from '../../../core/pipes/age.pipe';
   styleUrl: './member-detailed.component.css',
 })
 export class MemberDetailedComponent implements OnInit {
-  private memberService = inject(MemberService);
+  protected memberService = inject(MemberService);
+  private accountService = inject(AccountService);
   private activeRouter = inject(ActivatedRoute);
   // protected member$?: Observable<Member>;
-  protected member = signal<Member | undefined>(undefined);
+  // protected member = signal<Member | undefined>(undefined);
+  // Computed signal can use other signal to work out what its value should be
+  protected isCurrentUser = computed(() => {
+    return (
+      this.accountService.currentUser()?.id ===
+      this.activeRouter.snapshot.paramMap.get('id')
+    );
+  });
 
   private router = inject(Router);
   protected title = signal<string | undefined>('Profile');
@@ -31,9 +40,9 @@ export class MemberDetailedComponent implements OnInit {
   ngOnInit(): void {
     // this.member$ = this.loadMember();
 
-    this.activeRouter.data.subscribe({
-      next: (data) => this.member.set(data['member']),
-    });
+    // this.activeRouter.data.subscribe({
+    //   next: (data) => this.member.set(data['member']),
+    // });
 
     //setting on intial load
     this.title.set(this.activeRouter.firstChild?.snapshot?.title);
