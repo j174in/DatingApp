@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Controllers;
+using API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 //Adding DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -40,6 +42,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
 
     });
+
+builder.Services.Configure<CloudinarySettings>
+    (builder.Configuration.GetSection("CloudinarySettings"));
 
 var app = builder.Build();
 app.UseGlobalErrorException();
