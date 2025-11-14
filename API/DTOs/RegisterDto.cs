@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace API.DTOs
 {
@@ -18,6 +19,20 @@ namespace API.DTOs
         [Required]
         [MinLength(4)]
         public string Password { get; set; } = String.Empty;
+
+        [Required]
+        public string Gender { get; set; } = "";
+
+        [Required]
+        public string City { get; set; } = "";
+
+        [Required]
+        public string Country { get; set; } = "";
+
+        [Required]
+        public DateOnly DateOfBirth { get; set; }
+
+
 
     }
 }

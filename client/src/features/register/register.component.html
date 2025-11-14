@@ -3,7 +3,56 @@
 >
   <div class="card-title justify-center text-3xl text-primary">Sign Up</div>
   <div class="card-body w-full">
-    <form
+    <ul class="steps">
+      <li class="step step-primary">Credentials</li>
+      <li class="step" [class.step-primary]="currentStep() === 2">Profile</li>
+    </ul>
+
+    @if(currentStep() === 1){
+    <form [formGroup]="credentialForm" class="flex flex-col gap-4 w-full steps">
+      <app-text-input
+        label="Email"
+        formControlName="email"
+        class="mt-5"
+      ></app-text-input>
+
+      <app-text-input
+        label="Display Name"
+        formControlName="displayName"
+      ></app-text-input>
+
+      <!-- <label class="floating-label text-left">
+        <span>Display Name</span>
+        <input
+          class="input w-full"
+          [class.input-error]="
+            registerForm.controls['displayName'].invalid &&
+            registerForm.controls['displayName'].touched
+          "
+          formControlName="displayName"
+          type="text"
+          placeholder="Display Name"
+        />
+        @if ( registerForm.controls['displayName'].invalid &&
+        registerForm.controls['displayName'].touched){
+        <div class="validation-hint text-error text-xs">
+          Display Name is required
+        </div>
+        }
+      </label> -->
+
+      <app-text-input
+        label="Password"
+        formControlName="password"
+        type="password"
+      ></app-text-input>
+
+      <app-text-input
+        label="Confirm Password"
+        formControlName="confirmPassword"
+        type="password"
+      ></app-text-input>
+      <!-- <form
       #registerForm="ngForm"
       (ngSubmit)="register()"
       class="flex flex-col gap-4 w-full"
@@ -28,7 +77,7 @@
         type="password"
         [(ngModel)]="cred.password"
         placeholder="Password"
-      />
+      /> -->
 
       <!-- <select class="select w-full">
         <option disabled selected>Pick a member</option>
@@ -39,8 +88,75 @@
 
       <div class="flex items-center justify-end gap-3">
         <button class="btn" type="button" (click)="cancel()">Cancel</button>
-        <button class="btn btn-primary" type="submit">Register</button>
+        <button
+          class="btn btn-primary"
+          [disabled]="!credentialForm.valid"
+          (click)="nextStep()"
+        >
+          Next
+        </button>
       </div>
     </form>
+    } @if ( currentStep() === 2){
+    <form
+      class="flex flex-col gap-4 w-full steps"
+      [formGroup]="profileForm"
+      (ngSubmit)="register()"
+    >
+      <!-- Component for geneder -->
+      <div class="flex items-center gap-4">
+        <div class="font-semibold">Gender:</div>
+        <label class="flex gap-3 items-center">
+          <span>Male</span>
+          <input
+            type="radio"
+            formControlName="gender"
+            value="male"
+            class="radio radio-primary"
+          />
+        </label>
+        <label class="flex gap-3 items-center">
+          <span>Female</span>
+          <input
+            type="radio"
+            formControlName="gender"
+            value="female"
+            class="radio radio-primary"
+          />
+        </label>
+      </div>
+      <app-text-input
+        type="date"
+        [maxDate]="getMaxDate()"
+        label="Date Of Birth"
+        formControlName="dateOfBirth"
+      ></app-text-input>
+      <app-text-input label="City" formControlName="city"></app-text-input>
+      <app-text-input
+        label="Country"
+        formControlName="country"
+      ></app-text-input>
+
+      <div class="flex items-center justify-end gap-3">
+        <button class="btn" type="button" (click)="prevStep()">Back</button>
+        <button
+          class="btn btn-primary"
+          [disabled]="!profileForm.valid"
+          type="submit"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+    }
   </div>
+  @if(validationErrors().length > 0){
+  <div class="mt-5 flex bg-gray-200 rounded-2xl w-1/2 p-3 mx-auto">
+    <ul class="flex flex-col text-error spaxe-y-1">
+      @for (error of validationErrors(); track $index) {
+      <li>{{ error }}</li>
+      }
+    </ul>
+  </div>
+  }
 </div>
