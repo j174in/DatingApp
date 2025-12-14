@@ -1,0 +1,71 @@
+<dialog #filterModal class="modal">
+  <div class="modal-box max-w-lg">
+    <h3 class="text-lg font-black">Select Filters</h3>
+    <div class="flex justify-between w-full items-center mt-6">
+      <div class="flex flex-col w-full gap-6">
+        <label class="flex justify-between items-center">
+          <span class="font-semibold">Select Gender</span>
+          <form class="filter">
+            <input type="reset" value="x" class="btn btn-square" />
+            <input
+              type="radio"
+              class="btn"
+              aria-label="Male"
+              [(ngModel)]="memberParams().gender"
+              name="gender"
+              value="male"
+            />
+            <input
+              type="radio"
+              class="btn"
+              aria-label="Female"
+              [(ngModel)]="memberParams().gender"
+              name="gender"
+              value="female"
+            />
+          </form>
+        </label>
+        <label class="flex justify-between items-center">
+          <span class="font-semibold">Select Age</span>
+          <div class="flex gap-3">
+            <input
+              type="number"
+              name="minAge"
+              class="input w-20"
+              [min]="18"
+              [(ngModel)]="memberParams().minAge"
+              (change)="onMinAgeChange()"
+            />
+            <input
+              type="number"
+              name="maxAge"
+              class="input w-20"
+              [min]="memberParams().minAge || 18"
+              [(ngModel)]="memberParams().maxAge"
+              (change)="onMaxAgeChange()"
+            />
+          </div>
+        </label>
+        <label class="flex justify-between items-center">
+          <span class="font-semibold">Order by: </span>
+          <select
+            name="orderBy"
+            class="select"
+            [(ngModel)]="memberParams().orderBy"
+          >
+            <option disabled selected>Order by</option>
+            <option value="created">Newest member</option>
+            <option value="lastActive">Last active</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="modal-action">
+      <button class="btn btn-primary" (click)="submit()">Submit</button>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="close()">close</button>
+  </form>
+</dialog>

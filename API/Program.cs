@@ -17,6 +17,7 @@ builder.Services.AddCors();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<LogUserActivity>();
 
 //Adding DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>

@@ -2,4 +2,5 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: all;
+  exclude: rootscrollgutter;
 }
