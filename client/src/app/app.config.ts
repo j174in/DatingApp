@@ -30,17 +30,29 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(),
     provideAppInitializer(async () => {
+      // Used while for initial app intilization for injecting data. Wil run before
+      // the app is initialized.
       const initService = inject(InitService);
 
       return new Promise<void>((resolve) => {
         setTimeout(async () => {
           try {
             return lastValueFrom(initService.Init());
+            //lastValueFrom converts an observable to a promise returning the last value
+            //from the stream of observable output
+            //You can also use the FirstValueFrom() with it
+            //toPromise() is deprecated.
           } finally {
             const splash = document.getElementById('initial-splash');
             if (splash) splash.remove();
 
             resolve();
+
+            //resolve is called to tell the javascript that the promise has been complete.
+            //even if there was an error in the try
+            //this would ensure that always the app gets intiailzed even if there was
+            //an error and ensure the splash screen is gone.
+            //this is not always neccessary.
           }
         }, 500);
       });
