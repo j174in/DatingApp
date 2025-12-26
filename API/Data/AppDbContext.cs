@@ -11,10 +11,22 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Member> Member { get; set; }
     public DbSet<Photo> Photo { get; set; }
     public DbSet<MemberLike> Likes { get; set; }
+    public DbSet<Message> Messages { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<MemberLike>()
             .HasKey(x => new { x.SourceMemberId, x.TargetMemberId });
@@ -35,7 +47,13 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),
-            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+        //DateTime MessageRead has a DateTime? Value, so the above convertion
+        //doesn't hold for that datatype.
+        var dateTimeNullConverter = new ValueConverter<DateTime?, DateTime?>(
+            v => v.HasValue ? v.Value.ToUniversalTime() : null,
+            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null
         );
 
 
@@ -46,6 +64,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 if (property.ClrType == typeof(DateTime))
                 {
                     property.SetValueConverter(dateTimeConverter);
+                }
+                else if (property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(dateTimeNullConverter);
                 }
             }
         }
