@@ -1,0 +1,25 @@
+<div class="flex flex-col w-full mb-3">
+  <div class="flex justify-between items-center">
+    <div class="tabs tabs-border tabs-lg text-primary">
+      @for (tab of tabs; track $index) {
+      <button
+        class="tab"
+        [hidden]="
+          tab.value === 'roles' &&
+          !accountService.currentUser()?.roles?.includes('Admin')
+        "
+        (click)="setCurrentTab(tab.value)"
+        [class.tab-active]="tab.value === activeTab"
+      >
+        {{ tab.tabName }}
+      </button>
+      }
+    </div>
+  </div>
+</div>
+
+@if(activeTab === 'roles'){
+<app-user-management></app-user-management>
+} @else{
+<app-photo-management></app-photo-management>
+}

@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Controllers;
 using API.Helpers;
+using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,14 @@ builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<LogUserActivity>();
+
+builder.Services.AddIdentityCore<AppUser>(opt =>
+    {
+        opt.Password.RequireNonAlphanumeric = false;
+        opt.User.RequireUniqueEmail = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 //Adding DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -46,6 +56,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
     });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+    .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+
 builder.Services.Configure<CloudinarySettings>
     (builder.Configuration.GetSection("CloudinarySettings"));
 
@@ -55,6 +69,7 @@ app.UseCors(x =>
 {
     x.AllowAnyHeader()
      .AllowAnyMethod()
+     .AllowCredentials()
      .WithOrigins(
         "http://localhost:4200",
         "https://localhost:4200"
@@ -73,8 +88,9 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<AppDbContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedUsers(context);
+    await Seed.SeedUsers(userManager);
 }
 catch (Exception ex)
 {

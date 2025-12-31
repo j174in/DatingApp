@@ -13,6 +13,8 @@ import { MemberProfileComponent } from '../features/members/member-profile/membe
 import { MemberMessagesComponent } from '../features/members/member-messages/member-messages.component';
 import { memberResolver } from '../features/members/member.resolver';
 import { preventUnsavedChangesGuard } from '../core/guards/prevent-unsaved-changes.guard';
+import { AdminComponent } from '../features/admin/admin.component';
+import { adminGuard } from '../core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -57,7 +59,9 @@ export const routes: Routes = [
   },
   { path: 'server-error', component: ServerErrorComponent },
   { path: 'errors', component: TestErrorsComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
   { path: '**', component: NotFoundComponent },
+  // Anything here wil not work as the '**' is for default
 ];
 
 // :id is dynamic

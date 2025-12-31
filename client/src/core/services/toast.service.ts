@@ -11,7 +11,12 @@ export class ToastService {
     if (!document.getElementById('toast-container')) {
       const toastContainer = document.createElement('div');
       toastContainer.id = 'toast-container';
-      toastContainer.classList.add('toast', 'toast-bottom', 'toast-end');
+      toastContainer.classList.add(
+        'toast',
+        'toast-bottom',
+        'toast-end',
+        'z-50'
+      );
       document.body.appendChild(toastContainer);
     }
   }
@@ -27,7 +32,7 @@ export class ToastService {
     toast.classList.add('alert', alertClass, 'shadow-lg');
     toast.innerHTML = `
     <span>${message}</span>
-    <button class="btn btn-ghost ml-4 btn-sm">x</button>
+    <button class="btn btn-ghost ml-4 btn-sm ">x</button>
     `;
     toast.querySelector('button')?.addEventListener('click', () => {
       toastContainer.removeChild(toast);

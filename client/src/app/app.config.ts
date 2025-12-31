@@ -37,7 +37,7 @@ export const appConfig: ApplicationConfig = {
       return new Promise<void>((resolve) => {
         setTimeout(async () => {
           try {
-            return lastValueFrom(initService.Init());
+            await lastValueFrom(initService.Init());
             //lastValueFrom converts an observable to a promise returning the last value
             //from the stream of observable output
             //You can also use the FirstValueFrom() with it
