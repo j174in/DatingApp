@@ -13,6 +13,7 @@ import { filter, Observable, single } from 'rxjs';
 import { Member } from '../../../types/member';
 import { AgePipe } from '../../../core/pipes/age.pipe';
 import { AccountService } from '../../../core/services/account.service';
+import { PresenceServiceService } from '../../../core/services/presence-service.service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -24,6 +25,7 @@ export class MemberDetailedComponent implements OnInit {
   protected memberService = inject(MemberService);
   private accountService = inject(AccountService);
   private activeRouter = inject(ActivatedRoute);
+  protected presenceService = inject(PresenceServiceService);
   // protected member$?: Observable<Member>;
   // protected member = signal<Member | undefined>(undefined);
   // Computed signal can use other signal to work out what its value should be

@@ -4,6 +4,8 @@ import { LoginCreds, RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LikesService } from './likes.service';
+import { PresenceServiceService } from './presence-service.service';
+import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +16,7 @@ export class AccountService {
   //app component is root so not destoryed
   private http = inject(HttpClient);
   private likesService = inject(LikesService);
+  private presenceService = inject(PresenceServiceService);
   currentUser = signal<User | null>(null);
 
   baseUrl = environment.baseApiUrl;
@@ -74,15 +77,21 @@ export class AccountService {
   }
 
   logout() {
-    this.currentUser.set(null);
     localStorage.removeItem('filters');
     this.likesService.clearLikeIds();
+    this.currentUser.set(null);
+    this.presenceService.stopHubConnection();
   }
 
   setCurrentUser(user: User) {
     user.roles = this.getRolesFromJwt(user);
     this.currentUser.set(user);
     this.likesService.getLikesIds();
+    if (
+      this.presenceService.hubConnection?.state !== HubConnectionState.Connected
+    ) {
+      this.presenceService.createPresenceHubConnection(user);
+    }
   }
 
   getRolesFromJwt(user: User): string[] {

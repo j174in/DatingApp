@@ -3,6 +3,9 @@
   routerLink="/members/{{ member.id }}"
   class="card cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-2 relative"
 >
+  @if(isOnline()){
+  <span class="status status-success absolute top-3 left-3"></span>
+  }
   <img
     src="{{ member?.imageUrl || '/user.png' }}"
     alt="{{ member.displayName }} image"
