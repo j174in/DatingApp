@@ -27,9 +27,11 @@
         <li>
           <a routerLink="photos" routerLinkActive="text-primary">Photos</a>
         </li>
+        @if(!isCurrentUser()){
         <li>
           <a routerLink="messages" routerLinkActive="text-primary">Messages</a>
         </li>
+        }
       </ul>
     </div>
     <div class="card-actions justify-between px-2 mb-3 gap-2">
