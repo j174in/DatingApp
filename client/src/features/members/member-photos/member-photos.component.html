@@ -8,11 +8,18 @@
       src="{{ photo.url }}"
       alt="photo of member"
       class="rounded-lg w-full"
+      [class.opacity-30]="!photo.isApproved"
     />
-    @if(accountService.currentUser()?.id === memberService.member()?.id){
+    @if (!photo.isApproved) {
+    <div class="absolute bottom-2 badge badge-outline badge-error">
+      Awaiting approval
+    </div>
+    } @if(accountService.currentUser()?.id === memberService.member()?.id){
     <app-star-button
       (clickEvent)="setMainPhoto(photo)"
-      [disabled]="photo.url === memberService.member()?.imageUrl"
+      [disabled]="
+        photo.url === memberService.member()?.imageUrl || !photo.isApproved
+      "
       [selected]="photo.url === memberService.member()?.imageUrl"
       class="absolute top-1 right-1"
     ></app-star-button>

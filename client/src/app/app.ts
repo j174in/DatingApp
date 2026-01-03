@@ -4,16 +4,18 @@ import { lastValueFrom } from 'rxjs';
 import { NavComponent } from '../layout/nav/nav.component';
 import { User } from '../types/user';
 import { Router, RouterOutlet } from '@angular/router';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-root',
-  imports: [NavComponent, RouterOutlet],
+  imports: [NavComponent, RouterOutlet, ConfirmDialogComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
   // private accountService = inject(AccountService);
   protected router = inject(Router);
+
   // private http = inject(HttpClient); // new way of styling
   // title = 'DatingApp';
   // protected members = signal<User[]>([]);

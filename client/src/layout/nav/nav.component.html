@@ -103,6 +103,7 @@
         <ul
           tabindex="-1"
           class="dropdown-content dropdown-end menu bg-base-100 z-1 w-52"
+          (click)="handleSelectedDropDown()"
         >
           <li routerLink="/members/{{ user.id }}/profile">
             <a>Edit profile</a>
@@ -130,7 +131,10 @@
           class="input"
           placeholder="Password"
         />
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn btn-primary">
+          @if(loading()){ <span class="mr-2 loading loading-spinner"></span>}
+          Login
+        </button>
       </form>
       }
     </div>

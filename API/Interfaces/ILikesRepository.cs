@@ -14,7 +14,6 @@ namespace API.Interfaces
         Task<IReadOnlyList<string>> GetCurrentMemberLikeIds(string memberId);
         void Delete(MemberLike like);
         void Add(MemberLike like);
-        Task<bool> SaveAllChangesAsync();
 
     }
 }

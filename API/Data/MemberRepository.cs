@@ -40,24 +40,24 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     return await PaginationHelper.CreateAsync(query, memberParams.PageSize, memberParams.PageNumber);
   }
 
-  public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId)
+  public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId, bool isCurrentUser)
   {
-    return await context.Member
-    .Where(x => x.Id == memberId)
-    .SelectMany(x => x.Photos)
-    .ToListAsync();
+    var query = context.Member
+     .Where(x => x.Id == memberId)
+     .SelectMany(x => x.Photos);
+
+    if (isCurrentUser) query = query.IgnoreQueryFilters();
+
+    return await query.ToListAsync();
   }
+
   public async Task<Member?> GetMemberForUpdateAsync(string memberId)
   {
     return await context.Member
     .Include(x => x.User)
     .Include(x => x.Photos)
+    .IgnoreQueryFilters()
     .SingleOrDefaultAsync(x => x.Id == memberId);
-  }
-
-  public async Task<bool> SaveAllAsync()
-  {
-    return await context.SaveChangesAsync() > 0;
   }
 
   public void Update(Member member)

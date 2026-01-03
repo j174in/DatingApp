@@ -22,6 +22,7 @@ export class NavComponent implements OnInit {
     localStorage.getItem('theme') || 'light'
   );
   protected themes = themes;
+  protected loading = signal<boolean>(false);
 
   ngOnInit(): void {
     document.documentElement.setAttribute('data-theme', this.selectedTheme());
@@ -35,14 +36,27 @@ export class NavComponent implements OnInit {
     if (elem) elem.blur();
   }
 
+  handleSelectedDropDown() {
+    const elem = document.activeElement as HTMLDivElement;
+    if (elem) elem.blur();
+  }
+
   login() {
+    this.loading.set(true);
     this.accountService.login(this.creds).subscribe({
       next: (result) => {
         this.router.navigateByUrl('/members'),
           (this.creds = {}),
           this.toastService.success('Logged In successfully');
+        this.loading.set(false);
       },
-      error: (error) => this.toastService.error(error.error),
+      error: (error) => {
+        this.toastService.error(error.error);
+        this.loading.set(false);
+      },
+      complete: () => {
+        // Loading is now handled in next and error
+      },
     });
   }
 

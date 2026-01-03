@@ -14,6 +14,7 @@ import { Member } from '../../../types/member';
 import { AgePipe } from '../../../core/pipes/age.pipe';
 import { AccountService } from '../../../core/services/account.service';
 import { PresenceServiceService } from '../../../core/services/presence-service.service';
+import { LikesService } from '../../../core/services/likes.service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -30,14 +31,22 @@ export class MemberDetailedComponent implements OnInit {
   // protected member = signal<Member | undefined>(undefined);
   // Computed signal can use other signal to work out what its value should be
   protected isCurrentUser = computed(() => {
-    return (
-      this.accountService.currentUser()?.id ===
-      this.activeRouter.snapshot.paramMap.get('id')
-    );
+    return this.accountService.currentUser()?.id === this.routeId();
   });
 
   private router = inject(Router);
   protected title = signal<string | undefined>('Profile');
+  protected routeId = signal<string | null>(null);
+  protected likesService = inject(LikesService);
+  protected hasLiked = computed(() =>
+    this.likesService.likeIds().includes(this.routeId()!)
+  );
+
+  constructor() {
+    this.activeRouter.paramMap.subscribe((parms) => {
+      this.routeId.set(parms.get('id'));
+    });
+  }
 
   ngOnInit(): void {
     // this.member$ = this.loadMember();
@@ -62,6 +71,11 @@ export class MemberDetailedComponent implements OnInit {
         next: () =>
           this.title.set(this.activeRouter.firstChild?.snapshot?.title),
       });
+  }
+
+  toggleLike(event: Event, memberId: string) {
+    event.stopPropagation();
+    this.likesService.toggleLike(memberId);
   }
 
   loadMember() {

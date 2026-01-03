@@ -12,14 +12,14 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    public class LikesController(ILikesRepository likesRepository) : BaseApiController
+    public class LikesController(IUnitOfWork uow) : BaseApiController
     {
         [HttpPost("{targetMemberId}")]
         public async Task<ActionResult> ToggleLike(string targetMemberId)
         {
             var sourceMemberId = User.GetMemberId();
 
-            var existinglike = await likesRepository.GetMemberLike(sourceMemberId, targetMemberId);
+            var existinglike = await uow.LikesRepository.GetMemberLike(sourceMemberId, targetMemberId);
 
             if (existinglike == null)
             {
@@ -28,14 +28,14 @@ namespace API.Controllers
                     SourceMemberId = sourceMemberId,
                     TargetMemberId = targetMemberId
                 };
-                likesRepository.Add(like);
+                uow.LikesRepository.Add(like);
             }
             else
             {
-                likesRepository.Delete(existinglike);
+                uow.LikesRepository.Delete(existinglike);
             }
 
-            if (await likesRepository.SaveAllChangesAsync()) return Ok();
+            if (await uow.Complete()) return Ok();
 
             return BadRequest("Error on adding like.");
         }
@@ -43,14 +43,14 @@ namespace API.Controllers
         [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetCurrentMemberLikeIds()
         {
-            return Ok(await likesRepository.GetCurrentMemberLikeIds(User.GetMemberId()));
+            return Ok(await uow.LikesRepository.GetCurrentMemberLikeIds(User.GetMemberId()));
         }
 
         [HttpGet()]
         public async Task<ActionResult<IReadOnlyList<Member>>> GetMemberLikes([FromQuery] LikeParams likeParams)
         {
             likeParams.CurrentUserId = User.GetMemberId();
-            return Ok(await likesRepository.GetMemberLikes(likeParams));
+            return Ok(await uow.LikesRepository.GetMemberLikes(likeParams));
         }
 
     }

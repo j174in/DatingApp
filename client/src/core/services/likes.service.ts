@@ -15,8 +15,20 @@ export class LikesService {
   //default access modifier is public
   likeIds = signal<string[]>([]);
 
-  toggleLike(targetMemberId: string): Observable<object> {
-    return this.http.post(`${this.baseUrl}likes/${targetMemberId}`, {});
+  toggleLike(targetMemberId: string) {
+    return this.http
+      .post(`${this.baseUrl}likes/${targetMemberId}`, {})
+      .subscribe({
+        next: () => {
+          if (this.likeIds().includes(targetMemberId)) {
+            this.likeIds.update((ids) =>
+              ids.filter((id) => id !== targetMemberId)
+            );
+          } else {
+            this.likeIds.update((ids) => [...ids, targetMemberId]);
+          }
+        },
+      });
   }
 
   getLikes(likeParams: LikesParams) {
