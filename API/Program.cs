@@ -97,10 +97,14 @@ app.UseCors(x =>
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 //Configure HTTP request Pipeline
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/messages");
+app.MapFallbackToController("Index", "Fallback");
 //service locator pattern
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
