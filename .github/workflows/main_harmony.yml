@@ -23,13 +23,14 @@ jobs:
         with:
           node-version: '22'
       - name: Install Angular cli
-        run: npm install -g @angular/clli@18
+        run: npm install -g @angular/cli@18
 
       - name: Install deps and build angular app
         run: |
           cd client
           npm install
           ng build
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
