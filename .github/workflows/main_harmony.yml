@@ -18,6 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup up node.jobs
+        uses: actions/setup-node@4
+        with:
+          node-version: '22'
+      - name: Install Angular cli
+        run: npm install -g @angular/clli@18
+
+      - name: Install deps and build angular app
+        run: |
+          cd client
+          npm install
+          ng build
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
@@ -47,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -62,4 +74,3 @@ jobs:
           app-name: 'harmony'
           slot-name: 'Production'
           package: .
-          
